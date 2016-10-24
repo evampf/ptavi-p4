@@ -10,17 +10,27 @@ import sys
 
 class SIPRegisterHandler(socketserver.DatagramRequestHandler):
 
+
+    Dicc = {}
+
     def handle(self):
+
         self.wfile.write(b"Hemos recibido tu peticion")
-        print(self.client_address)
-        dicc = {}
-        print("El cliente nos manda: ", line.decode('utf-8'))
-        for line in self.rfile:
+        mensaje = self.rfile.read().decode('utf-8')
+        print("El cliente nos manda: ", mensaje)
+
+        for line in self.rfile: 
+            Direccion = msg[msg.find("sip:") + 4 : msg.rfind(" SIP/2.0")]
+            Expires = int(msg[msg.find("Expires: ") + 9 : msg.find("\r\n\r\n")])
+            Dir_Ip = self.client_address[0]
             mensaje = line.decode('utf-8')
-            if mensaje[0] == 'REGISTER':
-            	dicc = {self.client_address[0]: self.client_address[1]}
-            	self.wfile.write(b'200 OK')
-            	print(dicc)
+            if Expires == 0:
+                del self.Dicc[Direccion]
+            elif Expires > 0:
+                self.Dicc[Dir] = {'address': Dir_Ip, 'Expires': Expires}
+            print(Dicc)
+            
+            self.wfile.write(b"SIP/2.0 200 OK\r\n\r\n")
 
 
 
